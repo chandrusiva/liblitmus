@@ -16,7 +16,7 @@
 static void usage(char *error) {
 	fprintf(stderr, "Error: %s\n", error);
 	fprintf(stderr,
-		"Usage:\n"
+		"Usage of rtspin:\n"
 		"	rt_spin [COMMON-OPTS] WCET PERIOD DURATION\n"
 		"	rt_spin [COMMON-OPTS] -f FILE [-o COLUMN] WCET PERIOD\n"
 		"	rt_spin -l\n"
