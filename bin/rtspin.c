@@ -25,6 +25,11 @@ static void usage(char *error) {
 		"              [-p PARTITION/CLUSTER [-z CLUSTER SIZE]] [-c CLASS]\n"
 		"              [-X LOCKING-PROTOCOL] [-L CRITICAL SECTION LENGTH] [-Q RESOURCE-ID]"
 		"\n"
+		"Usage for Mixed-criticality systems:\n"
+			"rt_spin -m1 NO_OF_LEVELS -m2 CRITICALITY_LEVEL_OF_TASK WCET1 WCET2 .. PERIOD DURATION\n"
+		"NOTE:\n"
+		"WCET values to be in increasing order."
+		"\n"
 		"WCET and PERIOD are milliseconds, DURATION is seconds.\n"
 		"CRITICAL SECTION LENGTH is in milliseconds.\n");
 	exit(EXIT_FAILURE);
