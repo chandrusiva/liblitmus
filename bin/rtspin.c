@@ -364,8 +364,23 @@ int main(int argc, char** argv)
 		num_values = num_of_levels - criticality_level +1;
 		if (argc - optind < (num_values + 2))
 			usage("Arguments missing.");
-	
-	
+		
+
+
+		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
+		period_ms = atof(argv[optind + num_value]);;
+		duration  = atof(argv[optind + num_value + 1]);
+		wcet   = ms2ns(wcet_ms);
+		period = ms2ns(period_ms);
+		if (wcet <= 0)
+			usage("The worst-case execution time must be a "
+					"positive number.");
+		if (period <= 0)
+			usage("The period must be a positive number.");
+		if (wcet > period) {
+			usage("The worst-case execution time must not "
+					"exceed the period.");
+		}
 	
 	}
 	
