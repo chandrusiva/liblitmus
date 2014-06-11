@@ -188,8 +188,8 @@ static int job(double exec_time, double program_end, int lock_od, double cs_leng
 		return 1;
 	}
 }
-
-#define OPTSTR "p:c:wlveo:f:s:q:X:L:Q:"
+/* Add options for MC systems */
+#define OPTSTR "p:m1:m2:c:wlveo:f:s:q:X:L:Q:"
 int main(int argc, char** argv)
 {
 	int ret;
@@ -211,7 +211,11 @@ int main(int argc, char** argv)
 	task_class_t class = RT_CLASS_HARD;
 	int cur_job = 0, num_jobs = 0;
 	struct rt_task param;
-
+	/* MC variable. Default is 0. Has to be set by user by using -m option */
+	int mc_task = 0;
+	int num_of_levels = 0;
+	int criticality_level = 0;
+	
 	/* locking */
 	int lock_od = -1;
 	int resource_id = 0;
@@ -234,6 +238,14 @@ int main(int argc, char** argv)
 			priority = atoi(optarg);
 			if (!litmus_is_valid_fixed_prio(priority))
 				usage("Invalid priority.");
+			break;
+		/* MC task system */
+		case 'm1':
+			num_of_levels = atoi(optarg);
+			mc_task = 1;
+			break;
+		case 'm2':
+			criticality_level = atoi(optarg);
 			break;
 		case 'c':
 			class = str2class(optarg);
@@ -301,27 +313,33 @@ int main(int argc, char** argv)
 		/*
 		 * if we're not reading from the CSV file, then we need
 		 * three parameters
+		 * And it should not be a MC task system
 		 */
-		if (argc - optind < 3)
+		 
+		if ((argc - optind < 3) && (!mc_task))
 			usage("Arguments missing.");
 	}
+	
+	/* This is only for non MC systems*/
+	if (!mc_task)
+	{
+		wcet_ms   = atof(argv[optind + 0]);
+		period_ms = atof(argv[optind + 1]);
 
-	wcet_ms   = atof(argv[optind + 0]);
-	period_ms = atof(argv[optind + 1]);
-
-	wcet   = ms2ns(wcet_ms);
-	period = ms2ns(period_ms);
-	if (wcet <= 0)
-		usage("The worst-case execution time must be a "
-				"positive number.");
-	if (period <= 0)
-		usage("The period must be a positive number.");
-	if (!file && wcet > period) {
-		usage("The worst-case execution time must not "
-				"exceed the period.");
+		wcet   = ms2ns(wcet_ms);
+		period = ms2ns(period_ms);
+		if (wcet <= 0)
+			usage("The worst-case execution time must be a "
+					"positive number.");
+		if (period <= 0)
+			usage("The period must be a positive number.");
+		if (!file && wcet > period) {
+			usage("The worst-case execution time must not "
+					"exceed the period.");
+		}
 	}
 
-	if (!file)
+	if (!file && !mc_task )
 		duration  = atof(argv[optind + 2]);
 	else if (file && num_jobs > 1)
 		duration += period_ms * 0.001 * (num_jobs - 1);
@@ -332,6 +350,24 @@ int main(int argc, char** argv)
 			bail_out("could not migrate to target partition or cluster.");
 	}
 
+	/* Parameters parsing for MC task systems is done here
+	* No of WCET values = num_of_levels - criticality_level + 1
+	* The number of arguments should be (No of WCET values + 1 + 1) for period and duration 
+	* 
+	*/
+	
+	if(mc_task)
+	{
+		if (argc - optind < (No of WCET values + 2))
+			usage("Arguments missing.");
+	
+	
+	
+	}
+	
+	
+	
+	
 	init_rt_task_param(&param);
 	param.exec_cost = wcet;
 	param.period = period;
