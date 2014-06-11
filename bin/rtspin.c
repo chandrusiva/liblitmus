@@ -193,9 +193,9 @@ static int job(double exec_time, double program_end, int lock_od, double cs_leng
 int main(int argc, char** argv)
 {
 	int ret;
-	lt_t wcet;
-	lt_t period;
-	double wcet_ms, period_ms;
+	lt_t wcet=0;
+	lt_t period=0;
+	double wcet_ms=0, period_ms=0;
 	unsigned int priority = LITMUS_LOWEST_PRIORITY;
 	int migrate = 0;
 	int cluster = 0;
@@ -344,7 +344,7 @@ int main(int argc, char** argv)
 
 	if (!file && !mc_task )
 		duration  = atof(argv[optind + 2]);
-	else if (file && num_jobs > 1)
+	else if (file && !mc_task && num_jobs > 1)
 		duration += period_ms * 0.001 * (num_jobs - 1);
 
 	if (migrate) {
