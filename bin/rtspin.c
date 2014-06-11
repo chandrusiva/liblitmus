@@ -365,11 +365,11 @@ int main(int argc, char** argv)
 		if (argc - optind < (num_values + 2))
 			usage("Arguments missing.");
 		
-
+		/* Linked list function calls*/
 
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
-		period_ms = atof(argv[optind + num_value]);;
-		duration  = atof(argv[optind + num_value + 1]);
+		period_ms = atof(argv[optind + num_values]);;
+		duration  = atof(argv[optind + num_values + 1]);
 		wcet   = ms2ns(wcet_ms);
 		period = ms2ns(period_ms);
 		if (wcet <= 0)
