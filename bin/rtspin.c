@@ -26,7 +26,7 @@ static void usage(char *error) {
 		"              [-X LOCKING-PROTOCOL] [-L CRITICAL SECTION LENGTH] [-Q RESOURCE-ID]"
 		"\n"
 		"Usage for Mixed-criticality systems:\n"
-			"rt_spin -m1 NO_OF_LEVELS -m2 CRITICALITY_LEVEL_OF_TASK WCET1 WCET2 .. PERIOD DURATION\n"
+			"rt_spin -m NO_OF_LEVELS -n CRITICALITY_LEVEL_OF_TASK WCET1 WCET2 .. PERIOD DURATION\n"
 		"NOTE:\n"
 		"WCET values to be in increasing order."
 		"\n"
@@ -189,7 +189,7 @@ static int job(double exec_time, double program_end, int lock_od, double cs_leng
 	}
 }
 /* Add options for MC systems */
-#define OPTSTR "p:m1:m2:c:wlveo:f:s:q:X:L:Q:"
+#define OPTSTR "p:m:n:c:wlveo:f:s:q:X:L:Q:"
 int main(int argc, char** argv)
 {
 	int ret;
@@ -213,8 +213,11 @@ int main(int argc, char** argv)
 	struct rt_task param;
 	/* MC variable. Default is 0. Has to be set by user by using -m option */
 	int mc_task = 0;
-	int num_of_levels = 0;
+	/*Total number of levels in the task set*/
+	int num_of_levels = 0; 
 	int criticality_level = 0;
+	/*Number of WCET values*/
+	int num_values = 0;
 	
 	/* locking */
 	int lock_od = -1;
@@ -240,11 +243,11 @@ int main(int argc, char** argv)
 				usage("Invalid priority.");
 			break;
 		/* MC task system */
-		case 'm1':
+		case 'm':
 			num_of_levels = atoi(optarg);
 			mc_task = 1;
 			break;
-		case 'm2':
+		case 'n':
 			criticality_level = atoi(optarg);
 			break;
 		case 'c':
@@ -358,7 +361,8 @@ int main(int argc, char** argv)
 	
 	if(mc_task)
 	{
-		if (argc - optind < (No of WCET values + 2))
+		num_values = num_of_levels - criticality_level +1;
+		if (argc - optind < (num_values + 2))
 			usage("Arguments missing.");
 	
 	
