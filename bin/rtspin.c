@@ -223,9 +223,8 @@ int main(int argc, char** argv)
 	struct exec_times *temp;
 	int loop_index=0;
 	/*this is the list of all WCET values for a task */
-	struct exec_times mylist 
-	
-	
+	struct exec_times mylist; 
+		
 	/* locking */
 	int lock_od = -1;
 	int resource_id = 0;
