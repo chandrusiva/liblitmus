@@ -219,6 +219,13 @@ int main(int argc, char** argv)
 	/*Number of WCET values*/
 	int num_values = 0;
 	
+	/*For traversing the list */
+	struct exec_times *temp;
+	int loop_index=0;
+	/*this is the list of all WCET values for a task */
+	struct exec_times mylist 
+	
+	
 	/* locking */
 	int lock_od = -1;
 	int resource_id = 0;
@@ -365,8 +372,20 @@ int main(int argc, char** argv)
 		if (argc - optind < (num_values + 2))
 			usage("Arguments missing.");
 		
-		/* Linked list function calls*/
-
+		/* Linked list implementation*/
+		/* Initialize the list head
+		*
+		*INIT_LIST_HEAD(&mylist.list)
+		*/
+		/*
+		for(loop_index=0;loop_index<num_values;loop_index++)
+		{
+			temp = (struct exec_times *)malloc(sizeof(struct exec_times));
+			temp->wcet_val = atof(argv[optind + loop_index]);
+			list_add_tail(&temp->list,&mylist.list);
+		}
+		*/
+		
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
 		duration  = atof(argv[optind + num_values + 1]);
