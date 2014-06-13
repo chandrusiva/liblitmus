@@ -12,7 +12,6 @@
 #include "common.h"
 
 
-
 static void usage(char *error) {
 	fprintf(stderr, "Error: %s\n", error);
 	fprintf(stderr,
@@ -372,18 +371,18 @@ int main(int argc, char** argv)
 			usage("Arguments missing.");
 		
 		/* Linked list implementation*/
-		/* Initialize the list head
-		*
-		*INIT_LIST_HEAD(&mylist.list)
-		*/
-		/*
+		/* Initialize the list head */
+		
+		INIT_LIST_HEAD(&mylist.list);
+		
+		
 		for(loop_index=0;loop_index<num_values;loop_index++)
 		{
 			temp = (struct exec_times *)malloc(sizeof(struct exec_times));
 			temp->wcet_val = atof(argv[optind + loop_index]);
 			list_add_tail(&temp->list,&mylist.list);
 		}
-		*/
+		
 		
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
