@@ -373,14 +373,14 @@ int main(int argc, char** argv)
 		/* Linked list implementation*/
 		/* Initialize the list head */
 		
-		INIT_LIST_HEAD(&mylist.list);
+		INIT_LIST_HEAD_U(&mylist.list);
 		
 		
 		for(loop_index=0;loop_index<num_values;loop_index++)
 		{
 			temp = (struct exec_times *)malloc(sizeof(struct exec_times));
 			temp->wcet_val = atof(argv[optind + loop_index]);
-			list_add_tail(&temp->list,&mylist.list);
+			list_add_tail_u(&temp->list,&mylist.list);
 		}
 		
 		
