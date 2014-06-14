@@ -10,7 +10,7 @@
 
 #include "litmus.h"
 #include "common.h"
-
+#include "list_userspace.h"
 
 static void usage(char *error) {
 	fprintf(stderr, "Error: %s\n", error);
@@ -187,6 +187,13 @@ static int job(double exec_time, double program_end, int lock_od, double cs_leng
 		return 1;
 	}
 }
+
+struct exec_times{
+	lt_t wcet_val;
+	struct list_head_u list;
+};
+
+
 /* Add options for MC systems */
 #define OPTSTR "p:m:n:c:wlveo:f:s:q:X:L:Q:"
 int main(int argc, char** argv)
