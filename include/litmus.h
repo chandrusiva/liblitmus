@@ -40,6 +40,10 @@ extern "C" {
 
 #include "migration.h"
 
+/*To support list implementation for mixed-criticality tasks */
+
+#include "litmus/list_userspace.h"
+
 /**
  * @private
  * Number of semaphore protocol object types
