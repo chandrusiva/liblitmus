@@ -10,7 +10,6 @@
 
 #include "litmus.h"
 #include "common.h"
-#include "list_userspace.h"
 
 static void usage(char *error) {
 	fprintf(stderr, "Error: %s\n", error);
