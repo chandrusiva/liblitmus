@@ -168,6 +168,7 @@ litmus-headers = \
 	include/litmus/rt_param.h \
 	include/litmus/fpmath.h \
 	include/litmus/unistd_32.h \
+	include/litmus/list_userspace.h \
 	include/litmus/unistd_64.h
 
 unistd-headers = \
