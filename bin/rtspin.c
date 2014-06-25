@@ -419,6 +419,10 @@ int main(int argc, char** argv)
 			PRECISE_ENFORCEMENT : NO_ENFORCEMENT;
 	if (migrate)
 		param.cpu = domain_to_first_cpu(cluster);
+	
+	/*Passing the exec_times list structure to kernel */
+	param.mylist_k = &mylist;	
+
 	ret = set_rt_task_param(gettid(), &param);
 	if (ret < 0)
 		bail_out("could not setup rt task params");
