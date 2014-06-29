@@ -428,12 +428,12 @@ int main(int argc, char** argv)
 		bail_out("could not setup rt task params");
 	
 	/*Passing the system criticality indicator */
-	/*
+	
 	ret = set_sys_cl(&num_values);
 	
 	if (ret != 0)
 		bail_out("could not set system criticality indicator");
-	*/
+	
 
 	init_litmus();
 
