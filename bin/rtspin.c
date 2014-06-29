@@ -421,11 +421,18 @@ int main(int argc, char** argv)
 		param.cpu = domain_to_first_cpu(cluster);
 	
 	/*Passing the exec_times list structure to kernel */
-	param.mylist_k = &mylist;	
+	//param.mylist_k = &mylist;	
 
 	ret = set_rt_task_param(gettid(), &param);
 	if (ret < 0)
 		bail_out("could not setup rt task params");
+	
+	/*Passing the system criticality indicator */
+	ret = set_sys_cl(&num_values);
+	
+	if (ret != 0)
+		bail_out("could not set system criticality indicator");
+
 
 	init_litmus();
 
