@@ -449,6 +449,12 @@ int null_call(cycles_t *timestamp);
  */
 struct control_page* get_ctrl_page(void);
 
+/** Function prototype of setting system criticality level
+ *  Return 0 on success
+ */
+int set_sys_cl(int* num_values);
+
+
 #ifdef __cplusplus
 }
 #endif
