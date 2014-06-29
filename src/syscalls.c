@@ -86,3 +86,11 @@ int null_call(cycles_t *timestamp)
 {
 	return syscall(__NR_null_call, timestamp);
 }
+
+/*Syscall stub for setting the system level indicator */
+int set_sys_cl(int* num_values)
+{
+	return syscall(__NR_set_sys_cl, num_values);
+}
+
+
