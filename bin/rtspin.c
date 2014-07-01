@@ -429,7 +429,7 @@ int main(int argc, char** argv)
 	
 	/*Passing the system criticality indicator */
 	
-	ret = set_sys_cl(&num_values);
+	ret = set_sys_cl(&num_of_levels);
 	
 	if (ret != 0)
 		bail_out("could not set system criticality indicator");
