@@ -224,11 +224,14 @@ int main(int argc, char** argv)
 	/*Number of WCET values*/
 	int num_values = 0;
 	
+	/*Pointer to store the integer values */
+	int* ptr=NULL;	
+	
 	/*For traversing the list */
-	struct exec_times *temp;
+	//struct exec_times *temp;
 	int loop_index=0;
 	/*this is the list of all WCET values for a task */
-	struct exec_times mylist; 
+	//struct exec_times mylist; 
 		
 	/* locking */
 	int lock_od = -1;
@@ -378,7 +381,7 @@ int main(int argc, char** argv)
 		
 		/* Linked list implementation*/
 		/* Initialize the list head */
-		
+		/*	
 		INIT_LIST_HEAD_U(&mylist.list);
 		
 		
@@ -388,8 +391,16 @@ int main(int argc, char** argv)
 			temp->wcet_val = atof(argv[optind + loop_index]);
 			list_add_tail_u(&temp->list,&mylist.list);
 		}
-		
-		
+		*/
+		ptr = (int*) malloc(sizeof(int)*num_values);
+				
+		for(loop_index=0;loop_index<num_values;loop_index++)
+		{
+			*(ptr+loop_index)=atoi(argv[optind+loop_index]);
+		}
+
+
+
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
 		duration  = atof(argv[optind + num_values + 1]);
@@ -433,7 +444,11 @@ int main(int argc, char** argv)
 	
 	if (ret != 0)
 		bail_out("could not set system criticality indicator");
-	
+
+	ret = set_wcet_val(ptr);
+		
+	if (ret != 0)
+		bail_out("could not set wcet values");
 
 	init_litmus();
 
