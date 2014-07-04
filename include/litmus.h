@@ -454,7 +454,7 @@ struct control_page* get_ctrl_page(void);
  */
 int set_sys_cl(int* num_values);
 
-int set_wcet_val(int* wcet_val);
+int set_wcet_val(int* wcet_val, int* num_values);
 
 #ifdef __cplusplus
 }

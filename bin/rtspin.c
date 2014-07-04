@@ -445,7 +445,7 @@ int main(int argc, char** argv)
 		if (ret != 0)
 			bail_out("could not set system criticality indicator");
 	
-		ret = set_wcet_val(ptr);
+		ret = set_wcet_val(ptr,&num_values);
 		if (ret != 0)
 			bail_out("could not set wcet values");
 	}
