@@ -438,18 +438,18 @@ int main(int argc, char** argv)
 	if (ret < 0)
 		bail_out("could not setup rt task params");
 	
-	/*Passing the system criticality indicator */
+	/*Passing the system criticality indicator and multiple wcet values */
+	if(mc_task)
+	{
+		ret = set_sys_cl(&num_of_levels);
+		if (ret != 0)
+			bail_out("could not set system criticality indicator");
 	
-	ret = set_sys_cl(&num_of_levels);
+		ret = set_wcet_val(ptr);
+		if (ret != 0)
+			bail_out("could not set wcet values");
+	}
 	
-	if (ret != 0)
-		bail_out("could not set system criticality indicator");
-
-	ret = set_wcet_val(ptr);
-		
-	if (ret != 0)
-		bail_out("could not set wcet values");
-
 	init_litmus();
 
 	ret = task_mode(LITMUS_RT_TASK);
