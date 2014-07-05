@@ -93,9 +93,9 @@ int set_sys_cl(int* num_values)
 	return syscall(__NR_set_sys_cl, num_values);
 }
 /*Syscall stub for passing the wcet values to kernel space*/
-int set_wcet_val(int* wcet_val, int* num_values)
+int set_wcet_val(pid_t pid, int* wcet_val, int* num_values)
 {
-	return syscall(__NR_set_wcet_val, wcet_val, num_values);
+	return syscall(__NR_set_wcet_val, pid, wcet_val, num_values);
 }
 
 
