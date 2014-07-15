@@ -452,7 +452,7 @@ struct control_page* get_ctrl_page(void);
 /** Function prototype of setting system criticality level
  *  Return 0 on success
  */
-int set_sys_cl(int* num_values);
+int set_sys_cl(pid_t pid, int* num_values, int* criticality_level);
 
 int set_wcet_val(pid_t pid, int* wcet_val, int* num_values);
 

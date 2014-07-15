@@ -441,7 +441,7 @@ int main(int argc, char** argv)
 	/*Passing the system criticality indicator and multiple wcet values */
 	if(mc_task)
 	{
-		ret = set_sys_cl(&num_of_levels);
+		ret = set_sys_cl(gettid(), &num_of_levels, &criticality_level);
 		if (ret != 0)
 			bail_out("could not set system criticality indicator");
 	
