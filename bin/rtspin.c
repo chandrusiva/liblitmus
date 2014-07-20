@@ -230,9 +230,13 @@ int main(int argc, char** argv)
 	/*For traversing the list */
 	//struct exec_times *temp;
 	int loop_index=0;
-	/*this is the list of all WCET values for a task */
-	//struct exec_times mylist; 
-		
+	
+	//Read lambda values for virtual deadlines from a file
+	//FILE *fp;
+	//float* lambda_ptr=NULL;
+	//float fp_temp;
+	//int retval;
+
 	/* locking */
 	int lock_od = -1;
 	int resource_id = 0;
@@ -253,6 +257,7 @@ int main(int argc, char** argv)
 			break;
 		case 'q':
 			priority = atoi(optarg);
+
 			if (!litmus_is_valid_fixed_prio(priority))
 				usage("Invalid priority.");
 			break;
@@ -399,6 +404,26 @@ int main(int argc, char** argv)
 			*(ptr+loop_index)=atoi(argv[optind+loop_index]);
 		}
 
+		//Read values from lambda.txt. This contains the lambda values for calculation 
+		// of virtual deadlines. Do (1-lambda) later..
+		
+	/*		
+		lambda_ptr = (float*) malloc(num_of_levels*sizeof(float));
+		fp = fopen("lambda.txt","r");
+		loop_index=0;
+		while(!feof(fp))
+		{
+			
+			retval = fscanf(fp,"%f",&fp_temp);
+			if(!retval)
+				fprintf(stderr, "Error in file read");
+			*(lambda_ptr+loop_index) = fp_temp;	
+			//printf("fp_temp = %f\n", fp_temp);
+			//printf("lamda value = %f\n", *(lambda_ptr+loop_index));
+			loop_index++;
+		}
+		fclose(fp);
+	*/	
 
 
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
