@@ -100,6 +100,35 @@ static void get_exec_times(const char *file, const int column,
 	assert(cur_job == *num_jobs);
 	fclose(fstream);
 }
+/*
+static float* get_lambda(const char* file_name,const int num_of_levels)
+{
+				
+		FILE *fp;
+		float* lambda_ptr=NULL;
+		float fp_temp;
+		int retval;
+		int loop_index;
+		
+		lambda_ptr = (float*) malloc(num_of_levels*sizeof(float));
+		fp = fopen(file_name,"r");
+		loop_index=0;
+		while(!feof(fp))
+		{
+			
+			retval = fscanf(fp,"%f",&fp_temp);
+			if(!retval)
+				fprintf(stderr, "Error in file read");
+			*(lambda_ptr+loop_index) = fp_temp;	
+			//printf("fp_temp = %f\n", fp_temp);
+			//printf("lamda value = %f\n", *(lambda_ptr+loop_index));
+			loop_index++;
+		}
+		fclose(fp);
+		return lambda_ptr;
+
+}
+*/
 
 #define NUMS 4096
 static int num[NUMS];
@@ -194,7 +223,7 @@ struct exec_times{
 
 
 /* Add options for MC systems */
-#define OPTSTR "p:m:n:c:wlveo:f:s:q:X:L:Q:"
+#define OPTSTR "p:m:n:c:wlveo:f:v:s:q:X:L:Q:"
 int main(int argc, char** argv)
 {
 	int ret;
@@ -227,16 +256,12 @@ int main(int argc, char** argv)
 	/*Pointer to store the integer values */
 	int* ptr=NULL;	
 	
-	/*For traversing the list */
-	//struct exec_times *temp;
 	int loop_index=0;
 	
 	//Read lambda values for virtual deadlines from a file
-	//FILE *fp;
 	//float* lambda_ptr=NULL;
-	//float fp_temp;
-	//int retval;
-
+	//const char* file_name=NULL;	
+	
 	/* locking */
 	int lock_od = -1;
 	int resource_id = 0;
@@ -269,6 +294,9 @@ int main(int argc, char** argv)
 		case 'n':
 			criticality_level = atoi(optarg);
 			break;
+		//case 'v':
+		//	file_name = optarg;
+		//	break;
 		case 'c':
 			class = str2class(optarg);
 			if (class == -1)
@@ -397,6 +425,7 @@ int main(int argc, char** argv)
 			list_add_tail_u(&temp->list,&mylist.list);
 		}
 		*/
+		
 		ptr = (int*) malloc(sizeof(int)*num_values);
 				
 		for(loop_index=0;loop_index<num_values;loop_index++)
@@ -407,24 +436,12 @@ int main(int argc, char** argv)
 		//Read values from lambda.txt. This contains the lambda values for calculation 
 		// of virtual deadlines. Do (1-lambda) later..
 		
-	/*		
-		lambda_ptr = (float*) malloc(num_of_levels*sizeof(float));
-		fp = fopen("lambda.txt","r");
-		loop_index=0;
-		while(!feof(fp))
-		{
-			
-			retval = fscanf(fp,"%f",&fp_temp);
-			if(!retval)
-				fprintf(stderr, "Error in file read");
-			*(lambda_ptr+loop_index) = fp_temp;	
-			//printf("fp_temp = %f\n", fp_temp);
-			//printf("lamda value = %f\n", *(lambda_ptr+loop_index));
-			loop_index++;
-		}
-		fclose(fp);
-	*/	
-
+		/*	
+		lambda_ptr = get_lambda(file_name,num_of_levels);
+		
+		for(loop_index=0;loop_index<num_of_levels;loop_index++)
+			printf("lambda values = %f\n",*(lambda_ptr+loop_index));
+		*/
 
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
