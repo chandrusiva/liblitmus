@@ -110,7 +110,7 @@ static float* get_lambda(const char* file_name,const int num_of_levels)
 		int retval;
 		int loop_index;
 		
-		lambda_ptr = (float*) malloc(num_of_levels*sizeof(float));
+		lambda_ptr = (float*) malloc((num_of_levels-1)*sizeof(float));
 		fp = fopen(file_name,"r");
 		loop_index=0;
 		while(!feof(fp))
@@ -259,7 +259,8 @@ int main(int argc, char** argv)
 	int loop_index=0;
 	
 	//Read lambda values for virtual deadlines from a file
-	//float* lambda_ptr=NULL;
+	float* lambda_ptr=NULL;	
+	unsigned long long *vd_ptr;
 	//const char* file_name=NULL;	
 	
 	/* locking */
@@ -442,12 +443,51 @@ int main(int argc, char** argv)
 		for(loop_index=0;loop_index<num_of_levels;loop_index++)
 			printf("lambda values = %f\n",*(lambda_ptr+loop_index));
 		*/
+		
+		//File input is not working right now. Hard code the 
+		//values for time being
+		
+		lambda_ptr = (float*) malloc(sizeof(float)*(num_of_levels-1));
+		//Note that the values found in find_lambda.c are 
+		//added with list_add_tail in kernel and
+		//0 is discarded.
+		//		
+		*(lambda_ptr+0)= 0.450000;	
+		*(lambda_ptr+1)= 0.500000;
+		*(lambda_ptr+2)= 0.550000;
 
+
+		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
+		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
+		*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 		
+		
+		
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
 		duration  = atof(argv[optind + num_values + 1]);
 		wcet   = ms2ns(wcet_ms);
 		period = ms2ns(period_ms);
+		
+			
+		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_of_levels-1));
+		
+		/*
+		*(vd_ptr+0) = *(lambda_ptr+0)*period;
+		*(vd_ptr+1) = *(lambda_ptr+1)*(*(vd_ptr+0));	
+		*(vd_ptr+2) = *(lambda_ptr+2)*(*(vd_ptr+1));
+		*/
+		
+		//Dont hardcode this.. 
+		for(loop_index=0;loop_index<(num_of_levels-1);loop_index++)
+		{
+			if(loop_index==0)				
+				*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*period;	
+			*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+(loop_index-1)));
+		}
+				
+
+	
+
 		if (wcet <= 0)
 			usage("The worst-case execution time must be a "
 					"positive number.");

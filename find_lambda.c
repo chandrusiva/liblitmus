@@ -218,9 +218,10 @@ int main()
 	for(loop_index=0;loop_index< max_sys_cl;loop_index++)
 		printf("%f\n", lambda[loop_index]);		
 	
-	//Save the lambda values in a file	
+	//Save the lambda values in a file
+	//Discard 0	
 	fp=fopen("bin/lambda.txt","w+");	
-	for(loop_index=0;loop_index< max_sys_cl;loop_index++)
+	for(loop_index=1;loop_index< max_sys_cl;loop_index++)
 		fprintf(fp,"%f ",lambda[loop_index]);
 	fclose(fp);
 
