@@ -93,9 +93,9 @@ int set_sys_cl(pid_t pid, int* num_values, int* criticality_level)
 	return syscall(__NR_set_sys_cl, pid, num_values, criticality_level);
 }
 /*Syscall stub for passing the wcet values to kernel space*/
-int set_wcet_val(pid_t pid, int* wcet_val, int* num_values)
+int set_wcet_val(pid_t pid, (unsigned long long*) wcet_val, (unsigned long long*) vd ,int* num_values)
 {
-	return syscall(__NR_set_wcet_val, pid, wcet_val, num_values);
+	return syscall(__NR_set_wcet_val, pid, wcet_val, vd, num_values);
 }
 
 
