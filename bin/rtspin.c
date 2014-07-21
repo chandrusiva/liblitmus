@@ -256,7 +256,7 @@ int main(int argc, char** argv)
 	/*Pointer to store the integer values */	
 	unsigned long long *ptr=NULL;
 	int loop_index=0;
-	
+	int temp_index=0;	
 	//Read lambda values for virtual deadlines from a file
 	float* lambda_ptr=NULL;	
 	unsigned long long *vd_ptr=NULL;
@@ -453,10 +453,10 @@ int main(int argc, char** argv)
 		//		
 		*(lambda_ptr+0)= 0.000000; //always 0	
 
-		*(lambda_ptr+1)= 0.450000;
-		*(lambda_ptr+2)= 0.500000;	
-		*(lambda_ptr+2)= 0.550000;
-
+		*(lambda_ptr+1)= 0.480000;
+		*(lambda_ptr+2)= 0.490000;	
+		*(lambda_ptr+3)= 0.500000;
+		
 
 		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
 		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
@@ -478,17 +478,15 @@ int main(int argc, char** argv)
 		*(vd_ptr+2) = *(lambda_ptr+2)*(*(vd_ptr+1));
 		*/
 		
-		//Dont hardcode this.. 
-		for(loop_index=0;loop_index<(num_values);loop_index++)
+		//Dont hardcode this.. 	
+		*(vd_ptr+0) = *(lambda_ptr+0)*period;
+		
+		for(loop_index=1;loop_index<(num_values);loop_index++)
 		{
 			//Period is in ns and period_ms is in ms..
 			//Now vd is in ns..
-			if(loop_index==0)
-			{				
-				*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*period;	
-				continue;	
-			}
-			*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+(loop_index-1)));
+			temp_index = loop_index-1;
+	*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+temp_index));
 		}
 				
 
