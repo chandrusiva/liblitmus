@@ -454,7 +454,7 @@ struct control_page* get_ctrl_page(void);
  */
 int set_sys_cl(pid_t pid, int* num_values, int* criticality_level);
 
-int set_wcet_val(pid_t pid, (unsigned long long*) wcet_val, (unsigned long long*) vd ,int* num_values);
+int set_wcet_val(pid_t pid, unsigned long long* wcet_val, unsigned long long* vd ,int* num_values);
 
 #ifdef __cplusplus
 }
