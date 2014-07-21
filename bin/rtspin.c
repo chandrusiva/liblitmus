@@ -253,14 +253,13 @@ int main(int argc, char** argv)
 	/*Number of WCET values*/
 	int num_values = 0;
 	
-	/*Pointer to store the integer values */
-	int* ptr=NULL;	
-	
+	/*Pointer to store the integer values */	
+	unsigned long long *ptr=NULL;
 	int loop_index=0;
 	
 	//Read lambda values for virtual deadlines from a file
 	float* lambda_ptr=NULL;	
-	unsigned long long *vd_ptr;
+	unsigned long long *vd_ptr=NULL;
 	//const char* file_name=NULL;	
 	
 	/* locking */
@@ -427,11 +426,11 @@ int main(int argc, char** argv)
 		}
 		*/
 		
-		ptr = (int*) malloc(sizeof(int)*num_values);
+		ptr = (unsigned long long*) malloc(sizeof(unsigned long long)*num_values);
 				
 		for(loop_index=0;loop_index<num_values;loop_index++)
 		{
-			*(ptr+loop_index)=atoi(argv[optind+loop_index]);
+			*(ptr+loop_index)=((atoi(argv[optind+loop_index]))*1000000LL);
 		}
 
 		//Read values from lambda.txt. This contains the lambda values for calculation 
@@ -447,20 +446,22 @@ int main(int argc, char** argv)
 		//File input is not working right now. Hard code the 
 		//values for time being
 		
-		lambda_ptr = (float*) malloc(sizeof(float)*(num_of_levels-1));
+		lambda_ptr = (float*) malloc(sizeof(float)*(num_of_levels));
 		//Note that the values found in find_lambda.c are 
 		//added with list_add_tail in kernel and
 		//0 is discarded.
 		//		
-		*(lambda_ptr+0)= 0.450000;	
-		*(lambda_ptr+1)= 0.500000;
+		*(lambda_ptr+0)= 0.000000; //always 0	
+
+		*(lambda_ptr+1)= 0.450000;
+		*(lambda_ptr+2)= 0.500000;	
 		*(lambda_ptr+2)= 0.550000;
 
 
 		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
 		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
-		*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 		
-		
+		*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 			
+		*(lambda_ptr+3) = 1 - *(lambda_ptr+3); 		
 		
 		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
@@ -469,7 +470,7 @@ int main(int argc, char** argv)
 		period = ms2ns(period_ms);
 		
 			
-		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_of_levels-1));
+		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_values));
 		
 		/*
 		*(vd_ptr+0) = *(lambda_ptr+0)*period;
@@ -478,10 +479,15 @@ int main(int argc, char** argv)
 		*/
 		
 		//Dont hardcode this.. 
-		for(loop_index=0;loop_index<(num_of_levels-1);loop_index++)
+		for(loop_index=0;loop_index<(num_values);loop_index++)
 		{
-			if(loop_index==0)				
+			//Period is in ns and period_ms is in ms..
+			//Now vd is in ns..
+			if(loop_index==0)
+			{				
 				*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*period;	
+				continue;	
+			}
 			*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+(loop_index-1)));
 		}
 				
@@ -527,7 +533,7 @@ int main(int argc, char** argv)
 		if (ret != 0)
 			bail_out("could not set system criticality indicator");
 	
-		ret = set_wcet_val(gettid(), ptr, &num_values);
+		ret = set_wcet_val(gettid(), ptr, vd_ptr, &num_values);
 		if (ret != 0)
 			bail_out("could not set wcet values");
 	}
