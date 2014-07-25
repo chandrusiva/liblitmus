@@ -453,30 +453,31 @@ int main(int argc, char** argv)
 		//		
 		*(lambda_ptr+0)= 0.000000; //always 0	
 
-		*(lambda_ptr+1)= 0.480000;
-		*(lambda_ptr+2)= 0.490000;	
-		*(lambda_ptr+3)= 0.500000;
+		*(lambda_ptr+1)= 0.220000;
+		*(lambda_ptr+2)= 0.940000;	
+		//*(lambda_ptr+3)= 0.500000;
 		
 
 		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
 		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
 		*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 			
-		*(lambda_ptr+3) = 1 - *(lambda_ptr+3); 		
+		//*(lambda_ptr+3) = 1 - *(lambda_ptr+3); 		
 		
-		wcet_ms   = atof(argv[optind + 0]); //Should be set to the first node in the linked list.
+		wcet_ms   = *(ptr+0); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
 		duration  = atof(argv[optind + num_values + 1]);
-		wcet   = ms2ns(wcet_ms);
+		//Since it is already converted to ns
+		wcet   = wcet_ms;
 		period = ms2ns(period_ms);
+		
+		//Check the values
+		//printf("wcet = %llu\n",wcet);
+		//printf("period = %llu\n",period);
+		//printf("duration = %f\n",duration);
+
 		
 			
 		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_values));
-		
-		/*
-		*(vd_ptr+0) = *(lambda_ptr+0)*period;
-		*(vd_ptr+1) = *(lambda_ptr+1)*(*(vd_ptr+0));	
-		*(vd_ptr+2) = *(lambda_ptr+2)*(*(vd_ptr+1));
-		*/
 		
 		//Dont hardcode this.. 	
 		*(vd_ptr+0) = *(lambda_ptr+0)*period;
