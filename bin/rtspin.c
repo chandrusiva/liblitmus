@@ -439,13 +439,13 @@ int main(int argc, char** argv)
 		//values for time being
 		lambda_ptr = (float*) malloc(sizeof(float)*(num_of_levels));
 		*(lambda_ptr+0)= 0.000000; //always 0	
-		//*(lambda_ptr+1)= 0.220000;
+		*(lambda_ptr+1)= 0.220000;
 		//*(lambda_ptr+2)= 0.940000;	
 		//*(lambda_ptr+3)= 0.500000;
 		
 		/*Do 1-lambda*/
 		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
-		//*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
+		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
 		//*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 			
 		//*(lambda_ptr+3) = 1 - *(lambda_ptr+3); 		
 		
@@ -461,9 +461,10 @@ int main(int argc, char** argv)
 		{
 			*(ptr+loop_index)= (*(ptr+loop_index))*1000000LL;
 		}
-
+		
 		//Compute virtual deadlines
 		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_values));
+		
 		*(vd_ptr+0) = *(lambda_ptr+0)*period;
 		//Dont hardcode this.. 	
 		for(loop_index=1;loop_index<(num_values);loop_index++)
@@ -473,6 +474,14 @@ int main(int argc, char** argv)
 			temp_index = loop_index-1;
 			*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+temp_index));
 		}
+		
+		/*
+		//For debugguing purposes. Remove this later
+		for(loop_index=0;loop_index<num_values;loop_index++)
+		{	
+			*(vd_ptr+loop_index)= 0;
+		}
+		*/
 
 		//Sanity checks
 		if (wcet <= 0)
