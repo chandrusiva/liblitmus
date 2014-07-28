@@ -100,6 +100,8 @@ static void get_exec_times(const char *file, const int column,
 	assert(cur_job == *num_jobs);
 	fclose(fstream);
 }
+//To get lambda values directly from a file.
+//For some reasons, it is not working. Need to fix this.
 /*
 static float* get_lambda(const char* file_name,const int num_of_levels)
 {
@@ -216,11 +218,14 @@ static int job(double exec_time, double program_end, int lock_od, double cs_leng
 	}
 }
 
+//No more used
+/*
 struct exec_times{
 	lt_t wcet_val;
+	lt_t vd;
 	struct list_head_u list;
 };
-
+*/
 
 /* Add options for MC systems */
 #define OPTSTR "p:m:n:c:wlveo:f:v:s:q:X:L:Q:"
@@ -294,6 +299,7 @@ int main(int argc, char** argv)
 		case 'n':
 			criticality_level = atoi(optarg);
 			break;
+		//Introduced this to get lambda values.. Not using now.
 		//case 'v':
 		//	file_name = optarg;
 		//	break;
@@ -405,37 +411,23 @@ int main(int argc, char** argv)
 	* The number of arguments should be (No of WCET values + 1 + 1) for period and duration 
 	* 
 	*/
-	
 	if(mc_task)
 	{
+				
 		num_values = num_of_levels - criticality_level +1;
 		if (argc - optind < (num_values + 2))
 			usage("Arguments missing.");
-		
-		/* Linked list implementation*/
-		/* Initialize the list head */
-		/*	
-		INIT_LIST_HEAD_U(&mylist.list);
-		
-		
-		for(loop_index=0;loop_index<num_values;loop_index++)
-		{
-			temp = (struct exec_times *)malloc(sizeof(struct exec_times));
-			temp->wcet_val = atof(argv[optind + loop_index]);
-			list_add_tail_u(&temp->list,&mylist.list);
-		}
-		*/
-		
+		//Allocate memory for ptr containing WCET values		
 		ptr = (unsigned long long*) malloc(sizeof(unsigned long long)*num_values);
-				
+		//Get them		
 		for(loop_index=0;loop_index<num_values;loop_index++)
 		{
-			*(ptr+loop_index)=((atoi(argv[optind+loop_index]))*1000000LL);
+			*(ptr+loop_index)= atoi(argv[optind+loop_index]);
 		}
-
+		
+		//Not working. Need to fix.
 		//Read values from lambda.txt. This contains the lambda values for calculation 
 		// of virtual deadlines. Do (1-lambda) later..
-		
 		/*	
 		lambda_ptr = get_lambda(file_name,num_of_levels);
 		
@@ -443,56 +435,46 @@ int main(int argc, char** argv)
 			printf("lambda values = %f\n",*(lambda_ptr+loop_index));
 		*/
 		
-		//File input is not working right now. Hard code the 
+		//File input for lambda is not working right now. Hard code the 
 		//values for time being
-		
 		lambda_ptr = (float*) malloc(sizeof(float)*(num_of_levels));
-		//Note that the values found in find_lambda.c are 
-		//added with list_add_tail in kernel and
-		//0 is discarded.
-		//		
 		*(lambda_ptr+0)= 0.000000; //always 0	
-
-		*(lambda_ptr+1)= 0.220000;
-		*(lambda_ptr+2)= 0.940000;	
+		//*(lambda_ptr+1)= 0.220000;
+		//*(lambda_ptr+2)= 0.940000;	
 		//*(lambda_ptr+3)= 0.500000;
 		
-
+		/*Do 1-lambda*/
 		*(lambda_ptr+0) = 1 - *(lambda_ptr+0); 			
-		*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
-		*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 			
+		//*(lambda_ptr+1) = 1 - *(lambda_ptr+1); 		
+		//*(lambda_ptr+2) = 1 - *(lambda_ptr+2); 			
 		//*(lambda_ptr+3) = 1 - *(lambda_ptr+3); 		
 		
 		wcet_ms   = *(ptr+0); //Should be set to the first node in the linked list.
 		period_ms = atof(argv[optind + num_values]);;
 		duration  = atof(argv[optind + num_values + 1]);
-		//Since it is already converted to ns
-		wcet   = wcet_ms;
+		
+		wcet   = ms2ns(wcet_ms);
 		period = ms2ns(period_ms);
 		
-		//Check the values
-		//printf("wcet = %llu\n",wcet);
-		//printf("period = %llu\n",period);
-		//printf("duration = %f\n",duration);
+		//Now convert all WCET values to ns
+		for(loop_index=0;loop_index<num_values;loop_index++)
+		{
+			*(ptr+loop_index)= (*(ptr+loop_index))*1000000LL;
+		}
 
-		
-			
+		//Compute virtual deadlines
 		vd_ptr = (unsigned long long*) malloc (sizeof(unsigned long long)*(num_values));
-		
-		//Dont hardcode this.. 	
 		*(vd_ptr+0) = *(lambda_ptr+0)*period;
-		
+		//Dont hardcode this.. 	
 		for(loop_index=1;loop_index<(num_values);loop_index++)
 		{
 			//Period is in ns and period_ms is in ms..
 			//Now vd is in ns..
 			temp_index = loop_index-1;
-	*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+temp_index));
+			*(vd_ptr+loop_index) = *(lambda_ptr+loop_index)*(*(vd_ptr+temp_index));
 		}
-				
 
-	
-
+		//Sanity checks
 		if (wcet <= 0)
 			usage("The worst-case execution time must be a "
 					"positive number.");
@@ -505,9 +487,7 @@ int main(int argc, char** argv)
 	
 	}
 	
-	
-	
-	
+
 	init_rt_task_param(&param);
 	param.exec_cost = wcet;
 	param.period = period;
@@ -518,14 +498,12 @@ int main(int argc, char** argv)
 	if (migrate)
 		param.cpu = domain_to_first_cpu(cluster);
 	
-	/*Passing the exec_times list structure to kernel */
-	//param.mylist_k = &mylist;	
-
 	ret = set_rt_task_param(gettid(), &param);
 	if (ret < 0)
 		bail_out("could not setup rt task params");
 	
-	/*Passing the system criticality indicator and multiple wcet values */
+	/*Passing the system criticality indicator, task criticality, multiple wcet values and virtual 		 * deadlines 
+	 */
 	if(mc_task)
 	{
 		ret = set_sys_cl(gettid(), &num_of_levels, &criticality_level);
@@ -580,6 +558,14 @@ int main(int argc, char** argv)
 
 	if (file)
 		free(exec_times);
+
+	//Free the memory
+	if(mc_task)
+	{
+		free(ptr);
+		free(lambda_ptr);
+		free(vd_ptr);
+	}
 
 	return 0;
 }
