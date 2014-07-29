@@ -504,6 +504,10 @@ int main(int argc, char** argv)
 	param.cls = class;
 	param.budget_policy = (want_enforcement) ?
 			PRECISE_ENFORCEMENT : NO_ENFORCEMENT;
+	
+	//Default policy is sporadic.. Change to periodic..
+	param.release_policy = TASK_PERIODIC;
+
 	if (migrate)
 		param.cpu = domain_to_first_cpu(cluster);
 	
