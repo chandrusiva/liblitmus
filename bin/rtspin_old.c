@@ -200,7 +200,7 @@ int main(int argc, char** argv)
 	int test_loop = 0;
 	int column = 1;
 	const char *file = NULL;
-	int want_enforcement = 0;
+	//int want_enforcement = 1;
 	double duration = 0, start = 0;
 	double *exec_times = NULL;
 	double scale = 1.0;
@@ -239,9 +239,9 @@ int main(int argc, char** argv)
 			if (class == -1)
 				usage("Unknown task class.");
 			break;
-		case 'e':
-			want_enforcement = 1;
-			break;
+		//case 'e':
+		//	want_enforcement = 1;
+		//	break;
 		case 'l':
 			test_loop = 1;
 			break;
@@ -336,8 +336,9 @@ int main(int argc, char** argv)
 	param.period = period;
 	param.priority = priority;
 	param.cls = class;
-	param.budget_policy = (want_enforcement) ?
-			PRECISE_ENFORCEMENT : NO_ENFORCEMENT;
+	param.budget_policy = PRECISE_ENFORCEMENT;
+	param.release_policy = TASK_PERIODIC;
+
 	if (migrate)
 		param.cpu = cluster_to_first_cpu(cluster, cluster_size);
 	ret = set_rt_task_param(gettid(), &param);
